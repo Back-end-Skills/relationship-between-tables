@@ -6,7 +6,8 @@ use App\Models\{
     User,
     Preference,
     Course,
-    Module
+    Module,
+    Permission
 };
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Routing\RouteUri;
@@ -78,11 +79,44 @@ Route::get('/one-to-many', function (){
     // Module::find(2)->update();
 
     //Lessons
-
+    $user = User::find(1);
 
     $modules = $course->modules;
 
     dd($modules);
+});
+
+Route::get('/many-to-many', function () {
+    //Create permissions
+    //dd(Permission::create(['name'=>'menu_03']));
+
+    // get user
+    $user = User::with('permissions')->find(5);     //$user = User::find(1);
+
+    //vincular permissions
+    $permission = Permission::find(1);
+    //$user->permissions()->save($permission);
+
+    //vincular várias permissions
+    /*$user->permissions()->saveMany([
+        Permission::find(1),
+        Permission::find(3),
+        Permission::find(2)
+    ]);*/
+    //$user->permissions()->sync([2]); //injetar na table permission_user id 2 da table permissions 
+    
+    //varias vezes a mesma permissão
+    //$user->permissions()->attach([1]);
+    
+    //remover permissoes da table permission_user passando o permission_id
+    $user->permissions()->detach([1]);
+
+
+    $user->refresh();
+
+    // get permissions
+    dd($user->permissions);
+
 });
 
 Route::get('/', function () {
