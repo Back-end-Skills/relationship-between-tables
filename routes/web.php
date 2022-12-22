@@ -119,6 +119,71 @@ Route::get('/many-to-many', function () {
 
 });
 
+Route::get('/many-to-many-pivot', function () {
+    $user = User::with('permissions')
+                    ->find(1);
+    //buscando permissions do user 1
+    $data_permissions_user=$user->permissions;
+    
+    //dd($user);
+
+    echo "<br>Name -table-users: {$user->name} <hr>";
+
+    echo "Permissions da table permissions para => {$user->name} <br>";
+    foreach($user->permissions as $permission)
+    {      
+        echo "id={$permission->id} Nome = {$permission->name} - permission_id={$permission->pivot->permission_id} - User_id={$permission->pivot->user_id}  <br>";
+    }
+    echo "<hr>";
+
+   
+
+    //imprimir todos os relacionamentos
+    foreach($data_permissions_user as $permission)
+    {
+        echo "Id: {$permission->id}  <br>";
+
+    }
+    //dd($data_permissions_user); 
+    
+    //exibe todo o object 
+    foreach($data_permissions_user as $permission)
+    {
+        echo "Id: $permission  <br>";
+
+    }
+});
+
+Route::get('/many-to-many-pivot-add', function () {
+    /*
+    * adicionar items an table pivot 
+    *
+    */
+    $user = User::with('permissions')->find(5);
+    $user->permissions()->attach([
+        1 => ['active' => false], 
+        3 => ['active' => false] 
+        
+    ]);
+
+    $user->refresh();
+  
+    $data_permissions_user=$user->permissions;
+    
+    
+
+    echo "<br>Name -table-users: {$user->name} <hr>";
+
+    echo "Permissions da table permissions para => {$user->name} <br>";
+    foreach($user->permissions as $permission)
+    {      
+        echo "id={$permission->id} Nome = {$permission->name} - permission_id={$permission->pivot->permission_id} - User_id={$permission->pivot->user_id}  <br>";
+    }
+    echo "<hr>";
+
+   
+});
+
 Route::get('/', function () {
     return view('welcome');
 });
